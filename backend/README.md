@@ -12,7 +12,7 @@ Here is most common distro installation instruction:
 ##### On Ubuntu
 ```bash
 sudo add-apt-repository ppa:deadsnakes/ppa -y
-sudo apt install python3.10-venv -y
+sudo apt install python3.10-venv python3.10-dev -y
 ```
 ## Install packages
 Be sure that you in backend dir
