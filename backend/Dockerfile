@@ -12,10 +12,12 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 # Turns off buffering for easier container logging
 ENV PYTHONUNBUFFERED=1
+# Set Python path to workdir
+ENV PYTHONPATH=/app
 
 COPY --from=builder /wheels /wheels
 RUN pip install --no-cache-dir /wheels/*
-# RUN apt install -y postgresql-client
+# TODO ffmpeg or image-magick
 
 COPY alembic.ini .
 

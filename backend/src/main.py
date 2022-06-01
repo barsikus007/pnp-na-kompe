@@ -1,28 +1,38 @@
 import uvicorn
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
-from sqlmodel import select
-from sqlmodel.ext.asyncio.session import AsyncSession
+from starlette.middleware.cors import CORSMiddleware
 
-from db import get_session
-from models import User, UserRead
+from src.core.config import settings
+from src.api.api_v1.api import api_router
 
 
 app = FastAPI(
-    title='PNP',
-    description='pnp na kompe',
-    version='8.1',
-    openapi_url='/docs/openapi.json',
+    title=settings.PROJECT_NAME,
+    description="pnp na komp ustanovil stal rabotat' super bistra!!",
+    version="8.1",
+    openapi_url=f"{settings.API_V1_STR}/openapi.json",
     default_response_class=ORJSONResponse,
-    docs_url='/docs',
+    docs_url="/docs",
     redoc_url=None,
 )
 
+# Set all CORS enabled origins
+if settings.BACKEND_CORS_ORIGINS:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[str(origin) for origin in settings.BACKEND_CORS_ORIGINS],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
-@app.get('/api/v1/kek', response_model=dict[str, list])
-async def kek_lol(session: AsyncSession = Depends(get_session)):
-    return {'lol': 'cities', 'kek': 'users'}
+app.include_router(api_router, prefix=settings.API_V1_STR)
 
 
-if __name__ == '__main__':
-    uvicorn.run('main:app', host='0.0.0.0', reload=True)  # , log_level='critical')
+if __name__ == "__main__":
+    uvicorn.run(
+        "main:app", host="127.0.0.1",
+        log_level='debug' if settings.DEBUG else "critical",
+        debug=settings.DEBUG, reload=settings.DEBUG,
+    )

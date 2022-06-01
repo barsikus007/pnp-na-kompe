@@ -8,7 +8,7 @@ from sqlmodel import SQLModel
 from alembic import context
 
 from src.models import *
-from src.settings import settings
+from src.core.config import settings
 
 
 # this is the Alembic Config object, which provides
@@ -17,7 +17,8 @@ config = context.config
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
-fileConfig(config.config_file_name)
+if config.config_file_name is not None:
+    fileConfig(config.config_file_name)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
@@ -43,7 +44,7 @@ def run_migrations_offline():
     script output.
 
     """
-    url=settings.DATABASE_URL
+    url = settings.DATABASE_URL
     context.configure(
         url=url,
         target_metadata=target_metadata,
